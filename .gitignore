@@ -12,11 +12,11 @@ venv/
 env/
 
 # Local data and model artifacts
-Data/
-models/trained_model/
-checkpoints/
-*.pth
-*.pt
+# Data/
+# models/trained_model/
+# checkpoints/
+# *.pth
+# *.pt
 
 # Notebook and OS noise
 .ipynb_checkpoints/

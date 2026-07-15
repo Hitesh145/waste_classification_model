@@ -2,7 +2,6 @@ from pathlib import Path
 
 import torch
 
-
 ROOT_DIR = Path(__file__).resolve().parent
 DATA_DIR = ROOT_DIR / "Data"
 dataset_folder_path = str(DATA_DIR / "dataset-resized")
@@ -29,4 +28,3 @@ def get_model_path(model_name):
 def get_checkpoint_path(model_name):
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
     return CHECKPOINT_DIR / f"checkpoint_{model_name}.pth"
-

@@ -7,10 +7,12 @@ from models.test import test_model
 
 
 def main():
+    print("Loading dataset...")
     dataset = ImageFolder(root=config.dataset_folder_path)
     num_classes = len(dataset.classes)
 
     train_loader, val_loader, test_loader = get_data_loaders(dataset)
+    print(f"Loaded {len(dataset)} images across {num_classes} classes.")
 
     # show_class_distribution(
     #     dataset,
@@ -23,9 +25,13 @@ def main():
 
     while running:
         print(f"Current model being used: {config.MODEL_NAME}")
-        print("Do you want to train or test the model? (train/test/analyze/quit)")
+        print("Choose an option: train, test, analyze, or quit")
 
-        choice = input().lower()
+        try:
+            choice = input("> ").strip().lower()
+        except EOFError:
+            print("No input received. Quitting the program.")
+            break
 
         if choice == "train" or choice == "1":
             print("You chose train.")
@@ -39,10 +45,15 @@ def main():
             print("You chose analyze.")
             analyse_and_plot_dataset(config.dataset_folder_path)
 
-        else:
+        elif choice == "quit" or choice == "q" or choice == "4":
             print("Quitting the program.")
             running = False
+
+        else:
+            print("Invalid choice. Please type train, test, analyze, or quit.")
 
 
 if __name__ == "__main__":
     main()
+
+    
