@@ -3,7 +3,7 @@ import config
 from utils.loader import get_data_loaders, show_class_distribution
 from preprocessing.eda import analyse_and_plot_dataset
 from models.train import train_model
-from models.test import test_model
+from models.test import test_model , test_single_image
 
 
 def main():
@@ -25,7 +25,7 @@ def main():
 
     while running:
         print(f"Current model being used: {config.MODEL_NAME}")
-        print("Choose an option: train, test, analyze, or quit")
+        print("Choose an option: train, test, analyze, test_single_image or quit (1,2,3,4,5)")
 
         try:
             choice = input("> ").strip().lower()
@@ -45,12 +45,18 @@ def main():
             print("You chose analyze.")
             analyse_and_plot_dataset(config.dataset_folder_path)
 
-        elif choice == "quit" or choice == "q" or choice == "4":
+        elif choice == "test_single_image" or choice == "4":
+            print("You chose test single image.")
+            test_single_image()
+        
+
+        elif choice == "quit" or choice == "q" or choice == "5":
             print("Quitting the program.")
             running = False
 
         else:
             print("Invalid choice. Please type train, test, analyze, or quit.")
+            running = False
 
 
 if __name__ == "__main__":
