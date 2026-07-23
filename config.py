@@ -4,7 +4,7 @@ import torch
 
 ROOT_DIR = Path(__file__).resolve().parent
 DATA_DIR = ROOT_DIR / "Data"
-dataset_folder_path = str(DATA_DIR / "dataset-resized")
+dataset_folder_path = str(DATA_DIR / "garbage_classification") # dataset-resized or garbage_classification
 
 MODEL_DIR = ROOT_DIR / "models" / "trained_model"
 CHECKPOINT_DIR = ROOT_DIR / "checkpoints"
@@ -17,7 +17,7 @@ MOMENTUM = 0.8
 NUM_EPOCHS = 30
 IMAGE_SIZE = 224
 
-MODEL_NAME = "custom_cnn"  # Options: "custom_cnn", "resnet18", "resnet34", "resnet50"
+MODEL_NAME = "resnet50"  # Options: "custom_cnn", "resnet18", "resnet34", "resnet50"
 
 
 def get_model_path(model_name):

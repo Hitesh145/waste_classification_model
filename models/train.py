@@ -6,6 +6,12 @@ from models.model import get_model
 import config
 from sklearn.utils.class_weight import compute_class_weight
 
+train_losses = []
+val_losses = []
+
+train_accuracies = []
+val_accuracies = []
+
 def train_model(
     model_name,
     train_loader,
@@ -52,6 +58,7 @@ def train_model(
         total = 0
 
         running_loss = 0.0
+        val_loss = 0.0
         for i, data in enumerate(train_loader):
             inputs, labels = data
 
@@ -73,18 +80,21 @@ def train_model(
             correct += (outputs.argmax(dim=1) == labels).sum().item()
             total += labels.size(0)
             running_loss += loss.item()
+        total_train_loss = running_loss / len(train_loader)
+        train_losses.append(total_train_loss)
+        train_accuracy = 100 * correct / total
+        train_accuracies.append(train_accuracy)
 
-        print(f"Training_Loss : {running_loss / len(train_loader):.4f}" + f" Accuracy: {100 * correct / total}%")
+        print(f"Training_Loss : {total_train_loss:.4f}" + f" Accuracy: {100 * correct / total}%")
 
-        model.eval()  # Set the model to evaluation mode
+        model.eval()
         print(f"Validating epoch {epoch}...")
+        val_loss = 0.0          # reset each epoch
         with torch.no_grad():
             correct = 0
             total = 0
             for data in val_loader:
                 inputs, labels = data
-
-                # Move inputs and labels to the device
                 inputs = inputs.to(config.device)
                 labels = labels.to(config.device)
 
@@ -93,13 +103,18 @@ def train_model(
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
-            accuracy = 100 * correct / total
-            print(f"Validation Accuracy: {accuracy}%")
+                loss = loss_fn(outputs, labels)
+                val_loss += loss.item()          # accumulate, don't overwrite
 
-            
+            total_val_loss = val_loss / len(val_loader)
+            val_losses.append(total_val_loss)
+            val_accuracy = 100 * correct / total
+            val_accuracies.append(val_accuracy)
+            print(f"Validation Accuracy: {val_accuracy}% and Validation Loss: {total_val_loss:.4f}")
+
             # Save the model if it has the best accuracy so far
-            if accuracy > best_accuracy and accuracy > 80 :  # Save only if accuracy is greater than 50%
-                best_accuracy = accuracy
+            if val_accuracy > best_accuracy and val_accuracy > 80 :  # Save only if accuracy is greater than 50%
+                best_accuracy = val_accuracy
                 torch.save(model.state_dict(), config.get_model_path(model_name))
                 torch.save({
                     'epoch': epoch,
@@ -108,6 +123,8 @@ def train_model(
                     'loss': loss,
                 }, config.get_checkpoint_path(model_name))
 
-            elif accuracy < best_accuracy:
-                print(f"Validation accuracy decreased from {best_accuracy}% to {accuracy}%. Stopping training.")
+            elif val_accuracy < best_accuracy:
+                print(f"Validation accuracy decreased from {best_accuracy}% to {val_accuracy}%. Stopping training.")
                 break
+
+
